@@ -1,0 +1,23 @@
+name: Unpack ZIP to repo
+on:
+  push:
+    branches: [ main ]
+permissions:
+  contents: write
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unzip
+        run: |
+          sudo apt-get update && sudo apt-get install -y unzip
+          unzip -q sublime-status-main.cleaned.zip -d tmp
+          shopt -s dotglob
+          mv tmp/sublime-status-main/* .
+          rm -rf tmp sublime-status-main.cleaned.zip
+      - name: Commit unpacked files
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "chore: unpack zip"
+          add: "."
